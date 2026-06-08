@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>OMNIN マニュアル</title>
+<link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'M PLUS Rounded 1c',sans-serif;background:#f0f4f8;color:#1a1a2e;min-height:100vh;}
+
+.header{background:linear-gradient(135deg,#1a1a2e 0%,#1a56db 100%);padding:20px 16px 16px;position:sticky;top:0;z-index:100;}
+.header-inner{display:flex;align-items:center;gap:12px;}
+.header-logo{font-size:22px;font-weight:900;color:#fff;letter-spacing:2px;}
+.header-title{font-size:14px;color:rgba(255,255,255,0.8);}
+.back-btn{color:rgba(255,255,255,0.8);background:rgba(255,255,255,0.15);border:none;border-radius:8px;padding:6px 12px;font-size:13px;cursor:pointer;font-family:'M PLUS Rounded 1c',sans-serif;}
+
+.main{padding:16px;max-width:680px;margin:0 auto;}
+
+.toc{background:#fff;border-radius:16px;padding:16px;margin-bottom:16px;box-shadow:0 2px 8px rgba(26,86,219,0.08);}
+.toc-title{font-size:13px;font-weight:700;color:#1a56db;margin-bottom:10px;letter-spacing:1px;}
+.toc-item{display:block;padding:7px 0;font-size:14px;color:#1a56db;text-decoration:none;border-bottom:1px solid #f0f4f8;}
+.toc-item:last-child{border-bottom:none;}
+.toc-item:hover{color:#1a1a2e;}
+
+.section{background:#fff;border-radius:16px;padding:20px;margin-bottom:16px;box-shadow:0 2px 8px rgba(26,86,219,0.08);}
+.section-header{display:flex;align-items:center;gap:10px;margin-bottom:14px;padding-bottom:10px;border-bottom:2px solid #e8f0fe;}
+.section-icon{font-size:24px;}
+.section-title{font-size:16px;font-weight:900;color:#1a1a2e;}
+.section-badge{font-size:10px;background:#e8f0fe;color:#1a56db;padding:2px 8px;border-radius:20px;font-weight:700;}
+
+h3{font-size:14px;font-weight:700;color:#1a56db;margin:14px 0 8px;}
+p{font-size:13px;line-height:1.8;color:#2d3748;margin-bottom:8px;}
+ul,ol{padding-left:20px;margin-bottom:8px;}
+li{font-size:13px;line-height:1.8;color:#2d3748;}
+
+.step{display:flex;gap:12px;margin-bottom:12px;align-items:flex-start;}
+.step-num{width:26px;height:26px;border-radius:50%;background:#1a56db;color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
+.step-body{flex:1;}
+.step-title{font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:2px;}
+.step-desc{font-size:12px;color:#4a5568;line-height:1.6;}
+
+.tip{background:#e8f0fe;border-left:4px solid #1a56db;border-radius:0 8px 8px 0;padding:10px 12px;margin:10px 0;}
+.tip-label{font-size:11px;font-weight:700;color:#1a56db;margin-bottom:2px;}
+.tip p{font-size:12px;color:#2d3748;margin:0;}
+
+.warning{background:#fff7ed;border-left:4px solid #f59e0b;border-radius:0 8px 8px 0;padding:10px 12px;margin:10px 0;}
+.warning-label{font-size:11px;font-weight:700;color:#d97706;margin-bottom:2px;}
+.warning p{font-size:12px;color:#2d3748;margin:0;}
+
+.badge{display:inline-block;font-size:11px;padding:2px 8px;border-radius:20px;font-weight:700;margin:2px;}
+.badge-blue{background:#dbeafe;color:#1a56db;}
+.badge-green{background:#dcfce7;color:#16a34a;}
+.badge-orange{background:#fff7ed;color:#d97706;}
+
+table{width:100%;border-collapse:collapse;font-size:12px;margin:10px 0;}
+th{background:#e8f0fe;color:#1a56db;padding:8px;text-align:left;font-weight:700;}
+td{padding:8px;border-bottom:1px solid #f0f4f8;color:#2d3748;vertical-align:top;}
+tr:last-child td{border-bottom:none;}
+
+.update-log{font-size:12px;color:#4a5568;}
+.update-date{font-weight:700;color:#1a56db;margin-right:8px;}
+
+.footer{text-align:center;padding:24px 16px;color:#4a5568;font-size:12px;}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-inner">
+    <button class="back-btn" onclick="history.back()">← 戻る</button>
+    <div>
+      <div class="header-logo">OMNIN</div>
+      <div class="header-title">使い方マニュアル</div>
+    </div>
+  </div>
+</div>
+
+<div class="main">
+
+<!-- 目次 -->
+<div class="toc">
+  <div class="toc-title">📋 目次</div>
+  <a href="#login" class="toc-item">① ログイン・招待</a>
+  <a href="#case" class="toc-item">② 案件登録・管理</a>
+  <a href="#shitami" class="toc-item">③ 現地下見の記録</a>
+  <a href="#seko" class="toc-item">④ 施工情報の入力・編集</a>
+  <a href="#photo" class="toc-item">⑤ 写真管理・撮影</a>
+  <a href="#kokuhan" class="toc-item">⑥ 電子小黒板モード</a>
+  <a href="#excel" class="toc-item">⑦ Excel出力</a>
+  <a href="#settings" class="toc-item">⑧ 設定</a>
+  <a href="#admin" class="toc-item">⑨ 管理者機能</a>
+  <a href="#updates" class="toc-item">🔄 更新履歴</a>
+</div>
+
+<!-- ① ログイン -->
+<div class="section" id="login">
+  <div class="section-header">
+    <div class="section-icon">🔐</div>
+    <div class="section-title">ログイン・招待</div>
+  </div>
+
+  <h3>ログイン方法</h3>
+  <div class="step">
+    <div class="step-num">1</div>
+    <div class="step-body">
+      <div class="step-title">招待リンクを受け取る</div>
+      <div class="step-desc">管理者から送られてくる招待リンクをタップします。招待リンクは7日間有効・1回のみ使用可能です。</div>
+    </div>
+  </div>
+  <div class="step">
+    <div class="step-num">2</div>
+    <div class="step-body">
+      <div class="step-title">Googleでログイン</div>
+      <div class="step-desc">「Googleでログイン」ボタンを押して、Googleアカウントでログインします。</div>
+    </div>
+  </div>
+  <div class="step">
+    <div class="step-num">3</div>
+    <div class="step-body">
+      <div class="step-title">アプリを使い始める</div>
+      <div class="step-desc">ログイン後は次回から招待リンクなしで直接ログインできます。</div>
+    </div>
+  </div>
+
+  <div class="warning">
+    <div class="warning-label">⚠️ 注意</div>
+    <p>招待リンクなしでログインしようとすると「アクセス権限がありません」と表示されます。管理者に招待リンクの発行を依頼してください。</p>
+  </div>
+</div>
+
+<!-- ② 案件登録 -->
+<div class="section" id="case">
+  <div class="section-header">
+    <div class="section-icon">📋</div>
+    <div class="section-title">案件登録・管理</div>
+  </div>
+
+  <h3>新規案件の登録</h3>
+  <p>画面下の「➕ 新規登録」タブから登録します。</p>
+
+  <table>
+    <tr><th>項目</th><th>内容</th></tr>
+    <tr><td>案件ステータス</td><td>見込み / 確定 / 完了 から選択</td></tr>
+    <tr><td>担当営業</td><td>担当者名を入力</td></tr>
+    <tr><td>ビルダー名</td><td>施工会社名を入力（必須）</td></tr>
+    <tr><td>工事名</td><td>〇〇様邸など（必須）</td></tr>
+    <tr><td>施主名</td><td>施主のお名前</td></tr>
+    <tr><td>住所</td><td>現場住所（入力するとマップ表示）</td></tr>
+    <tr><td>工種</td><td>柱状 / 鋼管 / 表層 / ピュアパイル から選択</td></tr>
+  </table>
+
+  <h3>案件一覧・検索</h3>
+  <p>「📋 案件一覧」タブに全案件が表示されます。左にスワイプすると削除ボタンが表示されます。</p>
+
+  <h3>案件の編集</h3>
+  <p>案件詳細画面で「✏️ 編集」ボタンから基本情報を修正できます。</p>
+
+  <div class="tip">
+    <div class="tip-label">💡 ポイント</div>
+    <p>住所を入力するとGoogleマップへのリンクが自動表示されます。</p>
+  </div>
+
+  <h3>🚛 大型車ルート</h3>
+  <p>案件詳細の「現場の場所」カードに「🚛 大型車ルートを開く」ボタンが表示されます（住所登録済みの場合）。タップするとGoogleマップのナビが起動します。スマホではGoogleマップアプリが自動で開きます。</p>
+</div>
+
+<!-- ③ 現地下見 -->
+<div class="section" id="shitami">
+  <div class="section-header">
+    <div class="section-icon">🔍</div>
+    <div class="section-title">現地下見の記録</div>
+  </div>
+
+  <p>案件詳細の「STEP2 現地下見」から記録します。</p>
+
+  <table>
+    <tr><th>項目</th><th>内容</th></tr>
+    <tr><td>下見日</td><td>現地調査を行った日付</td></tr>
+    <tr><td>下見担当</td><td>担当者名</td></tr>
+    <tr><td>地形</td><td>平坦 / 傾斜 / 谷 / その他</td></tr>
+    <tr><td>地質</td><td>乾燥/軟らかい / 乾燥/硬い / 湿潤/軟らかい / 湿潤/硬い</td></tr>
+    <tr><td>植生</td><td>草 / 低木 / 高木 / なし</td></tr>
+    <tr><td>空中障害</td><td>有 / 無</td></tr>
+    <tr><td>高低差</td><td>有 / 無</td></tr>
+    <tr><td>道路幅</td><td>実測値（m）を入力</td></tr>
+    <tr><td>搬入障害 / 重機自走 / 大型車搬入</td><td>有 / 無 / 可 / 不可 から選択</td></tr>
+    <tr><td>水道 / トイレ</td><td>有 / 無</td></tr>
+  </table>
+</div>
+
+<!-- ④ 施工情報 -->
+<div class="section" id="seko">
+  <div class="section-header">
+    <div class="section-icon">🔧</div>
+    <div class="section-title">施工情報の入力・編集</div>
+  </div>
+
+  <p>案件詳細の「STEP3 施工情報」から入力、または詳細画面の「✏️ 編集」ボタンから後から修正できます。</p>
+
+  <table>
+    <tr><th>項目</th><th>内容</th></tr>
+    <tr><td>杭径 (φ)</td><td>数値入力（例：300）</td></tr>
+    <tr><td>杭長 (m)</td><td>数値入力（例：8.0）</td></tr>
+    <tr><td>本数</td><td>数値入力（例：20）</td></tr>
+    <tr><td>掘削深度 (m)</td><td>数値入力</td></tr>
+    <tr><td>改良厚 (m)</td><td>数値入力</td></tr>
+    <tr><td>設計GL</td><td>テキスト入力（例：GL=KBM+0.5）</td></tr>
+    <tr><td>盛土予定</td><td>有 / 無</td></tr>
+    <tr><td>盛土量 (mm)</td><td>数値入力</td></tr>
+    <tr><td>有機質土・黒ボク</td><td>有 / 無</td></tr>
+    <tr><td>設計接地圧 (KN/㎡)</td><td>数値入力</td></tr>
+  </table>
+
+  <div class="tip">
+    <div class="tip-label">💡 ポイント</div>
+    <p>施工情報は詳細画面の「✏️ 編集」ボタンからいつでも修正できます。未入力の場合も「未入力」と表示されて編集ボタンから入力できます。</p>
+  </div>
+</div>
+
+<!-- ⑤ 写真管理 -->
+<div class="section" id="photo">
+  <div class="section-header">
+    <div class="section-icon">📸</div>
+    <div class="section-title">写真管理・撮影</div>
+  </div>
+
+  <h3>写真の追加</h3>
+  <div class="step">
+    <div class="step-num">1</div>
+    <div class="step-body">
+      <div class="step-title">案件詳細の写真セクションを開く</div>
+      <div class="step-desc">「基本写真」または「特記写真」セクションの各項目に📷ボタンがあります。</div>
+    </div>
+  </div>
+  <div class="step">
+    <div class="step-num">2</div>
+    <div class="step-body">
+      <div class="step-title">写真を選択する</div>
+      <div class="step-desc">カメラで撮影またはライブラリから選択します。</div>
+    </div>
+  </div>
+  <div class="step">
+    <div class="step-num">3</div>
+    <div class="step-body">
+      <div class="step-title">自動保存される</div>
+      <div class="step-desc">写真には撮影日時が左下に自動で入ります。同じ項目に再度追加すると古い写真は自動削除されます（上書き保存）。</div>
+    </div>
+  </div>
+
+  <h3>基本写真の項目</h3>
+  <p>全景①②・前面道路・搬入口・地縄・丁張・境界杭・既存建物・外周擁壁・水道・メーターなど（設定から変更可能）</p>
+
+  <h3>特記写真</h3>
+  <p>項目名を自由に入力して追加できます。よく使う項目名は設定からテンプレート登録できます。</p>
+
+  <div class="warning">
+    <div class="warning-label">⚠️ 上書き保存について</div>
+    <p>同じ項目に写真を追加すると前の写真が削除されます。複数枚残したい場合は項目名を変えて登録してください。</p>
+  </div>
+</div>
+
+<!-- ⑥ 電子小黒板 -->
+<div class="section" id="kokuhan">
+  <div class="section-header">
+    <div class="section-icon">📋</div>
+    <div class="section-title">電子小黒板モード</div>
+    <span class="section-badge">NEW</span>
+  </div>
+
+  <p>写真項目の「📋 小黒板」ボタンから起動します。案件情報を小黒板として画面に重ねながら撮影できます。</p>
+
+  <h3>調査モード（デフォルト）</h3>
+  <p>工事名・施主名・工種・撮影日時を表示します。</p>
+
+  <h3>施工モード</h3>
+  <p>小黒板右上の「施工」ボタンに切り替えると、杭径・杭長・本数が追加表示されます。</p>
+
+  <h3>メモ機能</h3>
+  <p>画面下のテキストエリアにメモを入力すると小黒板にリアルタイムで反映されます。</p>
+
+  <div class="step">
+    <div class="step-num">1</div>
+    <div class="step-body">
+      <div class="step-title">「📋 小黒板」ボタンをタップ</div>
+      <div class="step-desc">カメラが起動し、左下に緑の小黒板が表示されます。</div>
+    </div>
+  </div>
+  <div class="step">
+    <div class="step-num">2</div>
+    <div class="step-body">
+      <div class="step-title">モードを選択（調査 / 施工）</div>
+      <div class="step-desc">右上のボタンで切り替えます。</div>
+    </div>
+  </div>
+  <div class="step">
+    <div class="step-num">3</div>
+    <div class="step-body">
+      <div class="step-title">シャッターボタンで撮影</div>
+      <div class="step-desc">小黒板が合成された状態で自動保存されます。</div>
+    </div>
+  </div>
+</div>
+
+<!-- ⑦ Excel出力 -->
+<div class="section" id="excel">
+  <div class="section-header">
+    <div class="section-icon">📊</div>
+    <div class="section-title">Excel出力</div>
+    <span class="section-badge">NEW</span>
+  </div>
+
+  <p>案件一覧画面の「📊 Excel出力」ボタンから全データをExcelファイルに出力できます。</p>
+
+  <h3>出力内容</h3>
+  <table>
+    <tr><th>シート名</th><th>内容</th></tr>
+    <tr><td>案件マスタ</td><td>全案件の基本情報</td></tr>
+    <tr><td>現地下見</td><td>全案件の現地下見情報</td></tr>
+    <tr><td>施工情報</td><td>全案件の施工情報</td></tr>
+  </table>
+
+  <p>ファイル名は <span class="badge badge-blue">OMNIN_YYYYMMDD.xlsx</span> の形式で保存されます。</p>
+</div>
+
+<!-- ⑧ 設定 -->
+<div class="section" id="settings">
+  <div class="section-header">
+    <div class="section-icon">⚙️</div>
+    <div class="section-title">設定</div>
+  </div>
+
+  <h3>基本写真項目の編集</h3>
+  <p>写真管理の「基本写真」に表示される項目をカスタマイズできます。追加・削除・並べ替えが可能です。</p>
+
+  <h3>特記テンプレートの登録</h3>
+  <p>特記写真追加時の候補として表示されるテンプレート項目を登録できます。よく使う項目名を登録しておくと便利です。</p>
+
+  <h3>マニュアル</h3>
+  <p>このページへのリンクです。</p>
+</div>
+
+<!-- ⑨ 管理者機能 -->
+<div class="section" id="admin">
+  <div class="section-header">
+    <div class="section-icon">👑</div>
+    <div class="section-title">管理者機能</div>
+    <span class="section-badge">管理者のみ</span>
+  </div>
+
+  <p>管理者権限を持つユーザーのみ設定タブに表示されます。</p>
+
+  <h3>招待リンクの発行</h3>
+  <div class="step">
+    <div class="step-num">1</div>
+    <div class="step-body">
+      <div class="step-title">設定タブ →「🔗 招待リンク発行」</div>
+      <div class="step-desc">「➕ 招待リンクを生成」ボタンをタップします。</div>
+    </div>
+  </div>
+  <div class="step">
+    <div class="step-num">2</div>
+    <div class="step-body">
+      <div class="step-title">URLをコピーして共有</div>
+      <div class="step-desc">「📋 コピー」ボタンでURLをコピーし、LINEやメールで送ります。</div>
+    </div>
+  </div>
+
+  <div class="tip">
+    <div class="tip-label">💡 招待リンクについて</div>
+    <p>招待リンクは7日間有効・1回のみ使用可能です。使用済みのリンクは再利用できません。</p>
+  </div>
+
+  <h3>ユーザー管理</h3>
+  <p>登録済みユーザーの一覧表示と、管理者 ↔ メンバーのロール変更ができます。</p>
+
+  <table>
+    <tr><th>ロール</th><th>できること</th></tr>
+    <tr><td><span class="badge badge-blue">管理者</span></td><td>全機能 + 招待リンク発行 + ユーザー管理</td></tr>
+    <tr><td><span class="badge badge-green">メンバー</span></td><td>案件登録・編集・写真管理・Excel出力</td></tr>
+  </table>
+</div>
+
+<!-- 更新履歴 -->
+<div class="section" id="updates">
+  <div class="section-header">
+    <div class="section-icon">🔄</div>
+    <div class="section-title">更新履歴</div>
+  </div>
+
+  <div class="update-log">
+    <p><span class="update-date">2026/06/08</span>電子小黒板モード追加（調査用・施工用）</p>
+    <p><span class="update-date">2026/06/08</span>Excel出力機能追加</p>
+    <p><span class="update-date">2026/06/08</span>施工情報の編集機能追加</p>
+    <p><span class="update-date">2026/06/08</span>写真上書き保存（メモリ圧迫回避）</p>
+    <p><span class="update-date">2026/06/08</span>写真に撮影日時を自動合成</p>
+    <p><span class="update-date">2026/06/08</span>工種にピュアパイルを追加</p>
+    <p><span class="update-date">2026/06/08</span>Googleログイン・招待制アクセス制御を実装</p>
+    <p><span class="update-date">2026/06/07</span>初回リリース（案件管理・現地下見・施工情報・写真管理・設定）</p>
+  </div>
+</div>
+
+</div><!-- /main -->
+
+<div class="footer">
+  OMNIN v1.0 &nbsp;|&nbsp; オムニ専用業務アプリ
+</div>
+
+</body>
+</html>
