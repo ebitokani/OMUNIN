@@ -1120,8 +1120,7 @@ async function uploadPhotos(input, caseId, itemName) {
     try {
       const stampedBlob = await stampDateOnImage(file);
       const ext = 'jpg';
-      const safeName = encodeURIComponent(itemName);
-      const path = `${caseId}/${safeName}_${Date.now()}.${ext}`;
+      const path = `${caseId}/${Date.now()}.${ext}`;
       const uploadRes = await fetch(`${SUPABASE_URL}/storage/v1/object/${STORAGE_BUCKET}/${path}`, {
         method:'POST',
         headers:{'apikey':SUPABASE_KEY,'Authorization':`Bearer ${token}`,'Content-Type':'image/jpeg'},
