@@ -174,9 +174,9 @@ body{font-family:'M PLUS Rounded 1c',sans-serif;background:#f0f4f8;color:#1a1a2e
 .role-member{background:#f0f4f8;color:#4a5568;}
 
 /* 電子小黒板 */
-#kokubanOverlay{display:none;position:fixed;inset:0;z-index:1000;flex-direction:column;background:#000;}
+#kokubanOverlay{display:none;position:fixed;inset:0;z-index:1000;flex-direction:column;background:#000;align-items:center;justify-content:center;}
 #kokubanOverlay.show{display:flex;}
-#kokubanCamera{width:100%;flex:1;object-fit:cover;background:#000;}
+#kokubanCamera{width:100%;height:100%;object-fit:contain;background:#000;}
 #kokubanBoard{position:absolute;bottom:90px;left:12px;background:#1a3d1f;border:3px solid #2d5a32;min-width:200px;max-width:62vw;box-shadow:0 2px 12px rgba(0,0,0,0.6);}
 #kokubanBoard .kb-header{background:#142e18;padding:5px 10px;border-bottom:2px solid #2d5a32;display:flex;align-items:center;gap:6px;}
 #kokubanBoard .kb-header-text{font-size:11px;color:#b8f0c0;font-weight:700;letter-spacing:1px;font-family:'Noto Sans JP','ヒラギノ角ゴ ProN','Meiryo',sans-serif;}
@@ -464,14 +464,15 @@ body{font-family:'M PLUS Rounded 1c',sans-serif;background:#f0f4f8;color:#1a1a2e
 
 <!-- 電子小黒板カメラ -->
 <div id="kokubanOverlay">
-  <video id="kokubanCamera" autoplay playsinline></video>
+  <video id="kokubanCamera" autoplay playsinline muted></video>
+  <!-- 右上の切り替えボタン（写真に写らない） -->
+  <div style="position:absolute;top:12px;right:12px;display:flex;gap:6px;z-index:10;">
+    <div id="kb_mode_chosa" onclick="setKokubanMode('chosa')" style="font-size:12px;padding:6px 14px;border-radius:8px;cursor:pointer;background:#2d5a32;color:#fff;font-weight:700;">調査</div>
+    <div id="kb_mode_seko" onclick="setKokubanMode('seko')" style="font-size:12px;padding:6px 14px;border-radius:8px;cursor:pointer;background:rgba(0,0,0,0.4);color:#b8f0c0;font-weight:700;">施工</div>
+  </div>
   <div id="kokubanBoard">
     <div class="kb-header">
       <div class="kb-header-text" id="kb_mode_label">📋 現地調査記録</div>
-      <div style="margin-left:auto;display:flex;gap:4px;">
-        <div id="kb_mode_chosa" onclick="setKokubanMode('chosa')" style="font-size:9px;padding:2px 6px;border-radius:4px;cursor:pointer;background:#2d8a42;color:#fff;">調査</div>
-        <div id="kb_mode_seko" onclick="setKokubanMode('seko')" style="font-size:9px;padding:2px 6px;border-radius:4px;cursor:pointer;background:rgba(255,255,255,0.2);color:#a3f0b0;">施工</div>
-      </div>
     </div>
     <div class="kb-body">
       <div class="kb-row"><span class="kb-label">工事名</span><span class="kb-val" id="kb_kouji">—</span></div>
@@ -484,7 +485,7 @@ body{font-family:'M PLUS Rounded 1c',sans-serif;background:#f0f4f8;color:#1a1a2e
       <div class="kb-row" id="kb_memo_row" style="display:none;"><span class="kb-label">メモ</span><span class="kb-val" id="kb_memo_display">—</span></div>
     </div>
     <div class="kb-footer">
-      <span class="kb-footer-text">OMNIN</span>
+      <span class="kb-footer-text">オムニ技研㈱</span>
       <span class="kb-footer-text" id="kb_footer_date"></span>
     </div>
   </div>
@@ -1291,7 +1292,7 @@ async function openKokukan(caseId, itemName) {
   // カメラ起動
   try {
     kokubanStream = await navigator.mediaDevices.getUserMedia({
-      video: { facingMode: 'environment', width: { ideal: 1920 }, height: { ideal: 1080 } }
+      video: { facingMode: 'environment', width: { ideal: 1920 }, height: { ideal: 1080 }, aspectRatio: { ideal: 16/9 } }
     });
     document.getElementById('kokubanCamera').srcObject = kokubanStream;
   } catch(e) {
@@ -1400,7 +1401,7 @@ async function shootKokukan() {
   ctx.fillStyle = '#b8f0c0';
   ctx.font = `${9*scale}px 'Noto Sans JP',sans-serif`;
   ctx.textBaseline = 'middle';
-  ctx.fillText('OMNIN', bx + padX, fy + footerH/2);
+  ctx.fillText('オムニ技研㈱', bx + padX, fy + footerH/2);
   const dateStr = document.getElementById('kb_footer_date').textContent;
   ctx.fillText(dateStr, bx + bw - padX - ctx.measureText(dateStr).width, fy + footerH/2);
 
