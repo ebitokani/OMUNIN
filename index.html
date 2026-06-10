@@ -205,11 +205,21 @@ body{font-family:'M PLUS Rounded 1c',sans-serif;background:#f0f4f8;color:#1a1a2e
   <div class="login-box">
     <div class="login-logo">OMNIN</div>
     <div class="login-sub">オムニ専用業務アプリ</div>
-    <button class="google-btn" onclick="loginWithGoogle()">
-      <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google">
-      Googleでログイン
-    </button>
-    <div class="login-note">※招待を受けたアカウントのみ<br>ログインできます</div>
+    <!-- タブ -->
+    <div style="display:flex;background:#f0f4f8;border-radius:12px;padding:4px;margin-bottom:20px;" id="authTabs">
+      <button id="tabLogin" onclick="switchAuthTab('login')" style="flex:1;padding:8px;border:none;border-radius:9px;font-size:14px;font-weight:700;cursor:pointer;background:#1a56db;color:#fff;font-family:'M PLUS Rounded 1c',sans-serif;transition:all 0.2s;">ログイン</button>
+      <button id="tabRegister" onclick="switchAuthTab('register')" style="flex:1;padding:8px;border:none;border-radius:9px;font-size:14px;font-weight:700;cursor:pointer;background:transparent;color:#4a5568;font-family:'M PLUS Rounded 1c',sans-serif;transition:all 0.2s;">新規登録</button>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      <input type="email" id="authEmail" placeholder="メールアドレス" style="width:100%;padding:13px 14px;border:2px solid #e2e8f0;border-radius:12px;font-size:15px;font-family:'M PLUS Rounded 1c',sans-serif;outline:none;box-sizing:border-box;" onfocus="this.style.borderColor='#1a56db'" onblur="this.style.borderColor='#e2e8f0'">
+      <input type="password" id="authPassword" placeholder="パスワード" style="width:100%;padding:13px 14px;border:2px solid #e2e8f0;border-radius:12px;font-size:15px;font-family:'M PLUS Rounded 1c',sans-serif;outline:none;box-sizing:border-box;" onfocus="this.style.borderColor='#1a56db'" onblur="this.style.borderColor='#e2e8f0'" onkeydown="if(event.key==='Enter')submitAuth()">
+      <div id="authNameRow" style="display:none;">
+        <input type="text" id="authName" placeholder="お名前（表示名）" style="width:100%;padding:13px 14px;border:2px solid #e2e8f0;border-radius:12px;font-size:15px;font-family:'M PLUS Rounded 1c',sans-serif;outline:none;box-sizing:border-box;" onfocus="this.style.borderColor='#1a56db'" onblur="this.style.borderColor='#e2e8f0'">
+      </div>
+      <button onclick="submitAuth()" style="width:100%;padding:14px;background:#1a56db;color:#fff;border:none;border-radius:14px;font-size:15px;font-weight:700;cursor:pointer;font-family:'M PLUS Rounded 1c',sans-serif;" id="authSubmitBtn">ログイン</button>
+    </div>
+    <div id="authMessage" style="font-size:12px;color:#ef4444;margin-top:12px;min-height:16px;"></div>
+    <div class="login-note" id="authNote">※招待を受けたアカウントのみ<br>ログインできます</div>
   </div>
 </div>
 
@@ -432,6 +442,22 @@ body{font-family:'M PLUS Rounded 1c',sans-serif;background:#f0f4f8;color:#1a1a2e
       <div id="userList"><div style="color:#4a5568;font-size:13px;">読み込み中...</div></div>
     </div>
     <div class="card">
+      <div class="card-title">➕ ユーザーを直接追加</div>
+      <p style="font-size:12px;color:#4a5568;margin-bottom:12px;">メアドとパスワードを設定してアカウントを作成します</p>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <input type="email" id="addUserEmail" placeholder="メールアドレス" style="background:#f8faff;border:1px solid #c3d4f7;border-radius:10px;padding:10px 12px;font-size:14px;font-family:'M PLUS Rounded 1c',sans-serif;outline:none;">
+        <input type="password" id="addUserPassword" placeholder="パスワード（8文字以上）" style="background:#f8faff;border:1px solid #c3d4f7;border-radius:10px;padding:10px 12px;font-size:14px;font-family:'M PLUS Rounded 1c',sans-serif;outline:none;">
+        <div style="display:flex;gap:8px;align-items:center;">
+          <label style="font-size:13px;color:#4a5568;">ロール：</label>
+          <div class="radio-group" id="addUserRoleGroup" style="flex:1;">
+            <div class="radio-btn selected" data-value="member" onclick="selectRadio('addUserRoleGroup',this)">メンバー</div>
+            <div class="radio-btn" data-value="admin" onclick="selectRadio('addUserRoleGroup',this)">管理者</div>
+          </div>
+        </div>
+        <button class="btn btn-primary" onclick="addUserDirectly()">👤 アカウントを作成</button>
+      </div>
+    </div>
+    <div class="card">
       <div class="card-title">🔗 招待リンク発行</div>
       <p style="font-size:13px;color:#4a5568;margin-bottom:12px;">招待リンクは7日間有効です。1回のみ使用可能。</p>
       <button class="btn btn-primary" onclick="createInvitation()" style="width:100%;">➕ 招待リンクを生成</button>
@@ -583,16 +609,62 @@ let tokkiTemplates = [];
 let maxPhotoCount = 5;
 
 // --- AUTH ---
-async function loginWithGoogle() {
-  // 招待トークンがURLにあれば保存
-  const token = new URLSearchParams(window.location.search).get('invite');
-  if (token) sessionStorage.setItem('inviteToken', token);
+let currentAuthTab = 'login';
+let pendingInviteToken = null;
 
-  const { error } = await supabaseClient.auth.signInWithOAuth({
-    provider: 'google',
-    options: { redirectTo: window.location.origin + window.location.pathname }
-  });
-  if (error) showToast('ログインエラー: ' + error.message, true);
+function switchAuthTab(tab) {
+  currentAuthTab = tab;
+  document.getElementById('tabLogin').style.background = tab==='login' ? '#1a56db' : 'transparent';
+  document.getElementById('tabLogin').style.color = tab==='login' ? '#fff' : '#4a5568';
+  document.getElementById('tabRegister').style.background = tab==='register' ? '#1a56db' : 'transparent';
+  document.getElementById('tabRegister').style.color = tab==='register' ? '#fff' : '#4a5568';
+  document.getElementById('authNameRow').style.display = tab==='register' ? 'block' : 'none';
+  document.getElementById('authSubmitBtn').textContent = tab==='register' ? '新規登録' : 'ログイン';
+  document.getElementById('authNote').textContent = tab==='register' ? '※招待リンクから登録するか、管理者にアカウント作成を依頼してください' : '※招待を受けたアカウントのみログインできます';
+  document.getElementById('authMessage').textContent = '';
+}
+
+async function submitAuth() {
+  const email = document.getElementById('authEmail').value.trim();
+  const password = document.getElementById('authPassword').value;
+  const msg = document.getElementById('authMessage');
+  if (!email || !password) { msg.textContent = 'メールアドレスとパスワードを入力してください'; return; }
+
+  const btn = document.getElementById('authSubmitBtn');
+  btn.disabled = true; btn.textContent = '処理中...';
+  msg.textContent = '';
+
+  try {
+    if (currentAuthTab === 'login') {
+      const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+      if (error) { msg.textContent = 'ログインに失敗しました: ' + error.message; return; }
+      await handleAuthCallback();
+    } else {
+      // 招待トークン確認
+      const token = pendingInviteToken || new URLSearchParams(window.location.search).get('invite');
+      if (!token) { msg.textContent = '招待リンクからのみ登録できます'; return; }
+      const { data, error } = await supabaseClient.auth.signUp({ email, password });
+      if (error) { msg.textContent = '登録に失敗しました: ' + error.message; return; }
+      // 少し待ってからセッション取得
+      await new Promise(r => setTimeout(r, 1000));
+      const { data: { session } } = await supabaseClient.auth.getSession();
+      if (session) {
+        currentUser = session.user;
+        authHeaders = { 'Content-Type':'application/json','apikey':SUPABASE_KEY,'Authorization':`Bearer ${session.access_token}`,'Prefer':'return=representation' };
+        Object.assign(headers, authHeaders);
+        await processInviteToken(token);
+        sessionStorage.removeItem('inviteToken');
+        await handleAuthCallback();
+      } else {
+        msg.textContent = '確認メールを送信しました。メールを確認して認証してください。';
+      }
+    }
+  } catch(e) {
+    msg.textContent = 'エラー: ' + e.message;
+  } finally {
+    btn.disabled = false;
+    btn.textContent = currentAuthTab === 'login' ? 'ログイン' : '新規登録';
+  }
 }
 
 async function logout() {
@@ -609,7 +681,6 @@ async function handleAuthCallback() {
   if (!session) return false;
 
   currentUser = session.user;
-  // Authヘッダーをユーザートークンで上書き
   authHeaders = {
     'Content-Type':'application/json',
     'apikey': SUPABASE_KEY,
@@ -618,25 +689,11 @@ async function handleAuthCallback() {
   };
   Object.assign(headers, authHeaders);
 
-  // 招待トークン処理
-  const inviteToken = sessionStorage.getItem('inviteToken');
-  if (inviteToken) {
-    await processInviteToken(inviteToken);
-    sessionStorage.removeItem('inviteToken');
-  }
-
   // ロール確認
   const role = await getUserRole(currentUser.id);
   if (!role) {
-    // ロールなし＝未承認ユーザー
     await supabaseClient.auth.signOut();
-    document.getElementById('loginScreen').innerHTML = `
-      <div class="login-box">
-        <div class="login-logo">OMNIN</div>
-        <div style="font-size:14px;color:#ef4444;margin:16px 0;font-weight:600;">⚠️ アクセス権限がありません</div>
-        <div style="font-size:13px;color:#4a5568;margin-bottom:20px;">招待リンクからのみ登録できます。<br>管理者に招待リンクを発行してもらってください。</div>
-        <button class="google-btn" onclick="location.reload()">← 戻る</button>
-      </div>`;
+    document.getElementById('authMessage').textContent = 'アクセス権限がありません。招待リンクから登録するか、管理者にお問い合わせください。';
     return false;
   }
 
@@ -659,19 +716,14 @@ async function processInviteToken(token) {
     if (!invitations.length) return;
 
     const inv = invitations[0];
-    if (new Date(inv.expires_at) < new Date()) return; // 期限切れ
+    if (new Date(inv.expires_at) < new Date()) return;
 
-    // 招待を使用済みに
     await fetch(`${SUPABASE_URL}/rest/v1/invitations?id=eq.${inv.id}`, {
-      method: 'PATCH',
-      headers: authHeaders,
+      method: 'PATCH', headers: authHeaders,
       body: JSON.stringify({ used_by: currentUser.id, used_at: new Date().toISOString() })
     });
-
-    // ロール付与（member）
     await fetch(`${SUPABASE_URL}/rest/v1/user_roles`, {
-      method: 'POST',
-      headers: authHeaders,
+      method: 'POST', headers: authHeaders,
       body: JSON.stringify({ user_id: currentUser.id, role: 'member' })
     });
   } catch(e) { console.error(e); }
@@ -777,24 +829,67 @@ function copyInviteUrl() {
 async function loadUserList() {
   if (currentUserRole !== 'admin') return;
   try {
+    // user_rolesとauth.usersを結合して取得（Service Role不要のため独自テーブルのメアドを使用）
     const res = await fetch(`${SUPABASE_URL}/rest/v1/user_roles?select=*`, {headers: authHeaders});
     const roles = await res.json();
     if (!roles.length) {
       document.getElementById('userList').innerHTML = '<div style="color:#4a5568;font-size:13px;">ユーザーなし</div>';
       return;
     }
+    // メアドはuser_rolesのemailカラムから（後述のSQL追加が必要）
     document.getElementById('userList').innerHTML = roles.map(r => `
       <div class="user-row">
-        <div>
-          <div class="user-info">${r.user_id.substring(0,8)}...</div>
-          <div class="user-email">${r.user_id}</div>
+        <div style="flex:1;min-width:0;">
+          <div class="user-info" style="font-size:13px;word-break:break-all;">${r.email || r.user_id.substring(0,16)+'...'}</div>
+          <div class="user-email">${r.role === 'admin' ? '管理者' : 'メンバー'}</div>
         </div>
-        <div style="display:flex;align-items:center;gap:8px;">
+        <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">
           <span class="role-badge ${r.role === 'admin' ? 'role-admin' : 'role-member'}">${r.role === 'admin' ? '管理者' : 'メンバー'}</span>
-          ${r.user_id !== currentUser?.id ? `<button class="btn btn-secondary btn-sm" onclick="toggleRole('${r.user_id}','${r.role}')" style="font-size:11px;padding:4px 8px;">変更</button>` : ''}
+          ${r.user_id !== currentUser?.id ? `
+            <button class="btn btn-secondary btn-sm" onclick="toggleRole('${r.user_id}','${r.role}')" style="font-size:11px;padding:4px 8px;">変更</button>
+            <button class="btn btn-danger btn-sm" onclick="deleteUser('${r.user_id}','${r.email||''}','${r.role}')" style="font-size:11px;padding:4px 8px;">削除</button>
+          ` : '<span style="font-size:11px;color:#4a5568;">(自分)</span>'}
         </div>
       </div>`).join('');
   } catch(e) { console.error(e); }
+}
+
+async function deleteUser(userId, email, role) {
+  if (!confirm(`「${email||userId}」を削除しますか？\nこの操作は取り消せません。`)) return;
+  try {
+    await fetch(`${SUPABASE_URL}/rest/v1/user_roles?user_id=eq.${userId}`, {method:'DELETE', headers: authHeaders});
+    showToast('✅ ユーザーを削除しました');
+    loadUserList();
+  } catch(e) { showToast('削除エラー: ' + e.message, true); }
+}
+
+async function addUserDirectly() {
+  const email = document.getElementById('addUserEmail').value.trim();
+  const password = document.getElementById('addUserPassword').value;
+  const role = getRadio('addUserRoleGroup') || 'member';
+  if (!email || !password) { showToast('メアドとパスワードを入力してください', true); return; }
+  if (password.length < 8) { showToast('パスワードは8文字以上にしてください', true); return; }
+  try {
+    // Supabase Admin APIでユーザー作成（Service Role Keyが必要なため、サインアップ後ロール付与）
+    const { data, error } = await supabaseClient.auth.admin?.createUser({
+      email, password, email_confirm: true
+    });
+    if (error) throw error;
+    const newUserId = data?.user?.id;
+    if (newUserId) {
+      await fetch(`${SUPABASE_URL}/rest/v1/user_roles`, {
+        method: 'POST', headers: authHeaders,
+        body: JSON.stringify({ user_id: newUserId, role, email })
+      });
+    }
+    document.getElementById('addUserEmail').value = '';
+    document.getElementById('addUserPassword').value = '';
+    showToast('✅ アカウントを作成しました');
+    loadUserList();
+  } catch(e) {
+    // Admin APIが使えない場合はinvitations経由で案内
+    showToast('⚠️ 直接追加にはService Role Keyが必要です。招待リンクをお使いください。', true);
+  }
 }
 
 async function toggleRole(userId, currentRole) {
@@ -912,6 +1007,15 @@ async function saveTokkiTemplates() {
 // --- INIT ---
 async function init() {
   document.getElementById('tourokuDate').value = new Date().toISOString().split('T')[0];
+
+  // 招待トークンがURLにあれば登録タブに自動切り替え
+  const inviteToken = new URLSearchParams(window.location.search).get('invite');
+  if (inviteToken) {
+    pendingInviteToken = inviteToken;
+    switchAuthTab('register');
+    document.getElementById('authNote').textContent = '✅ 招待リンクが確認されました。メアドとパスワードを設定してください。';
+    document.getElementById('authNote').style.color = '#1a56db';
+  }
 
   // Auth状態確認
   const authed = await handleAuthCallback();
