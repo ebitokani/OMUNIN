@@ -162,6 +162,10 @@ body{font-family:'M PLUS Rounded 1c',sans-serif;background:#f0f4f8;color:#1a1a2e
 .google-btn img{width:22px;height:22px;}
 .login-note{font-size:11px;color:#4a5568;margin-top:20px;line-height:1.6;}
 
+/* 書類チェック予定日行（「無」選択時のみ表示） */
+.doc-yotei-row{display:none;padding-left:16px;opacity:0.9;}
+.doc-yotei-row.visible{display:flex;}
+
 /* INVITE MODAL */
 .invite-card{background:#e8f0fe;border-radius:12px;padding:16px;margin-top:12px;}
 .invite-url{font-size:11px;word-break:break-all;background:#fff;padding:10px;border-radius:8px;color:#1a56db;margin:8px 0;border:1px solid #c3d4f7;}
@@ -290,41 +294,101 @@ body{font-family:'M PLUS Rounded 1c',sans-serif;background:#f0f4f8;color:#1a1a2e
 
   <!-- STEP2 -->
   <div id="step2" style="display:none;">
+
+    <!-- 工種詳細（施工打合せシート様式） -->
     <div class="card">
-      <div class="card-title">現地下見チェック</div>
+      <div class="card-title">工種・施工仕様</div>
       <div class="form-grid">
-        <div class="form-row"><label>下見日</label><input type="date" id="shitamiDate"></div>
+        <div class="form-row"><label>杭径 φ (mm)</label><input type="number" id="s2_kuiKei" placeholder="300" step="1"></div>
+        <div class="form-row"><label>杭長 L (m)</label><input type="number" id="s2_kuiCho" placeholder="8.0" step="0.1"></div>
+      </div>
+      <div class="form-grid">
+        <div class="form-row"><label>本数</label><input type="number" id="s2_honsu" placeholder="20" step="1"></div>
+        <div class="form-row"><label>改良厚 (m)</label><input type="number" id="s2_kairyoAtsu" placeholder="0.5" step="0.1"></div>
+      </div>
+      <div class="form-row"><label>柱状改良空掘</label><div class="radio-group" id="kuaboriGroup"><div class="radio-btn" data-value="有" onclick="selectRadio('kuaboriGroup',this)">有</div><div class="radio-btn" data-value="無" onclick="selectRadio('kuaboriGroup',this)">無</div></div></div>
+      <div class="form-grid">
+        <div class="form-row"><label>見積作成日</label><input type="date" id="mitsumoriDate"></div>
+        <div class="form-row"><label>施工日数</label><input type="number" id="sekoNissu" placeholder="3" step="1"></div>
+      </div>
+    </div>
+
+    <!-- 書類チェック -->
+    <div class="card">
+      <div class="card-title">書類チェック</div>
+      <p style="font-size:12px;color:#4a5568;margin-bottom:8px;">「無」の場合は受領/検討予定日を入力</p>
+
+      <div class="section-title">受領書類</div>
+      <div class="form-row"><label>調査データ</label><div class="radio-group" id="chosaDGroup"><div class="radio-btn" data-value="有" onclick="selectRadio('chosaDGroup',this)">有</div><div class="radio-btn" data-value="無" onclick="selectRadio('chosaDGroup',this)">無</div></div></div>
+      <div class="form-row doc-yotei-row" id="chosaDYoteiRow"><label>　受領予定日</label><input type="date" id="chosaDYotei"></div>
+      <div class="form-row"><label>案内図</label><div class="radio-group" id="annaiZGroup"><div class="radio-btn" data-value="有" onclick="selectRadio('annaiZGroup',this)">有</div><div class="radio-btn" data-value="無" onclick="selectRadio('annaiZGroup',this)">無</div></div></div>
+      <div class="form-row doc-yotei-row" id="annaiZYoteiRow"><label>　受領予定日</label><input type="date" id="annaiZYotei"></div>
+      <div class="form-row"><label>配置図</label><div class="radio-group" id="haichiZGroup"><div class="radio-btn" data-value="有" onclick="selectRadio('haichiZGroup',this)">有</div><div class="radio-btn" data-value="無" onclick="selectRadio('haichiZGroup',this)">無</div></div></div>
+      <div class="form-row doc-yotei-row" id="haichiZYoteiRow"><label>　受領予定日</label><input type="date" id="haichiZYotei"></div>
+      <div class="form-row"><label>1階平面図</label><div class="radio-group" id="heimen1Group"><div class="radio-btn" data-value="有" onclick="selectRadio('heimen1Group',this)">有</div><div class="radio-btn" data-value="無" onclick="selectRadio('heimen1Group',this)">無</div></div></div>
+      <div class="form-row doc-yotei-row" id="heimen1YoteiRow"><label>　受領予定日</label><input type="date" id="heimen1Yotei"></div>
+      <div class="form-row"><label>基礎伏図</label><div class="radio-group" id="kisoFGroup"><div class="radio-btn" data-value="有" onclick="selectRadio('kisoFGroup',this)">有</div><div class="radio-btn" data-value="無" onclick="selectRadio('kisoFGroup',this)">無</div></div></div>
+      <div class="form-row doc-yotei-row" id="kisoFYoteiRow"><label>　受領予定日</label><input type="date" id="kisoFYotei"></div>
+
+      <div class="section-title">検討書類</div>
+      <div class="form-row"><label>検討書</label><div class="radio-group" id="kentoshoGroup"><div class="radio-btn" data-value="有" onclick="selectRadio('kentoshoGroup',this)">有</div><div class="radio-btn" data-value="無" onclick="selectRadio('kentoshoGroup',this)">無</div></div></div>
+      <div class="form-row doc-yotei-row" id="kentoshoYoteiRow"><label>　検討予定日</label><input type="date" id="kentoshoYotei"></div>
+      <div class="form-row"><label>杭伏図</label><div class="radio-group" id="kuiFGroup"><div class="radio-btn" data-value="有" onclick="selectRadio('kuiFGroup',this)">有</div><div class="radio-btn" data-value="無" onclick="selectRadio('kuiFGroup',this)">無</div></div></div>
+      <div class="form-row doc-yotei-row" id="kuiFYoteiRow"><label>　検討予定日</label><input type="date" id="kuiFYotei"></div>
+
+      <div class="section-title">設備</div>
+      <div class="form-row"><label>水道立上げ予定</label><div class="radio-group" id="suidoTGroup"><div class="radio-btn" data-value="有" onclick="selectRadio('suidoTGroup',this)">有</div><div class="radio-btn" data-value="無" onclick="selectRadio('suidoTGroup',this)">無</div></div></div>
+    </div>
+
+    <!-- 下見チェックリスト -->
+    <div class="card">
+      <div class="card-title">下見チェックリスト</div>
+      <div class="form-grid">
+        <div class="form-row"><label>下見年月日</label><input type="date" id="shitamiDate"></div>
         <div class="form-row"><label>下見担当</label><input type="text" id="shitamiTantou" placeholder="名前"></div>
       </div>
+
       <div class="section-title">敷地内状況</div>
       <div class="form-row"><label>地形</label><div class="radio-group" id="chikeGroup"><div class="radio-btn" data-value="平坦" onclick="selectRadio('chikeGroup',this)">平坦</div><div class="radio-btn" data-value="起伏" onclick="selectRadio('chikeGroup',this)">起伏</div><div class="radio-btn" data-value="傾斜" onclick="selectRadio('chikeGroup',this)">傾斜</div></div></div>
-      <div class="form-row"><label>地質（湿潤）</label><div class="radio-group" id="chitsuGroup"><div class="radio-btn" data-value="乾燥" onclick="selectRadio('chitsuGroup',this)">乾燥</div><div class="radio-btn" data-value="湿潤" onclick="selectRadio('chitsuGroup',this)">湿潤</div></div></div>
-      <div class="form-row"><label>地質（硬軟）</label><div class="radio-group" id="katasaGroup"><div class="radio-btn" data-value="堅い" onclick="selectRadio('katasaGroup',this)">堅い</div><div class="radio-btn" data-value="軟らかい" onclick="selectRadio('katasaGroup',this)">軟らかい</div></div></div>
+      <div class="form-row"><label>地質（湿潤）</label><div class="radio-group" id="chitsuGroup"><div class="radio-btn" data-value="乾" onclick="selectRadio('chitsuGroup',this)">乾</div><div class="radio-btn" data-value="湿" onclick="selectRadio('chitsuGroup',this)">湿</div></div></div>
+      <div class="form-row"><label>地質（硬軟）</label><div class="radio-group" id="katasaGroup"><div class="radio-btn" data-value="堅" onclick="selectRadio('katasaGroup',this)">堅</div><div class="radio-btn" data-value="軟" onclick="selectRadio('katasaGroup',this)">軟</div></div></div>
       <div class="form-row"><label>植生</label><div class="radio-group" id="shokuseGroup"><div class="radio-btn" data-value="草" onclick="selectRadio('shokuseGroup',this)">草</div><div class="radio-btn" data-value="樹木" onclick="selectRadio('shokuseGroup',this)">樹木</div><div class="radio-btn" data-value="無" onclick="selectRadio('shokuseGroup',this)">無</div></div></div>
-      <div class="section-title">障害・設備</div>
       <div class="form-row"><label>空中線</label><div class="radio-group" id="kuuchusenGroup"><div class="radio-btn" data-value="有" onclick="selectRadio('kuuchusenGroup',this)">有</div><div class="radio-btn" data-value="無" onclick="selectRadio('kuuchusenGroup',this)">無</div></div></div>
       <div class="form-row"><label>空中線高さ (m)</label><input type="number" id="kuuchusenHeight" placeholder="5.0" step="0.1"></div>
-      <div class="form-row"><label>高低差</label><div class="radio-group" id="koteisaGroup"><div class="radio-btn" data-value="有" onclick="selectRadio('koteisaGroup',this)">有</div><div class="radio-btn" data-value="無" onclick="selectRadio('koteisaGroup',this)">無</div></div></div>
-      <div class="form-row"><label>高低差 (m)</label><input type="number" id="koteisaValue" placeholder="1.5" step="0.1"></div>
+      <div class="form-row"><label>高低差（最大）(m)</label><input type="number" id="koteisaValue" placeholder="1.5" step="0.1"></div>
+
       <div class="section-title">配置</div>
       <div class="form-row"><label>地縄</label><div class="radio-group" id="jinawGroup"><div class="radio-btn" data-value="有" onclick="selectRadio('jinawGroup',this)">有</div><div class="radio-btn" data-value="無" onclick="selectRadio('jinawGroup',this)">無</div></div></div>
       <div class="form-row"><label>丁張</label><div class="radio-group" id="choubariGroup"><div class="radio-btn" data-value="有" onclick="selectRadio('choubariGroup',this)">有</div><div class="radio-btn" data-value="無" onclick="selectRadio('choubariGroup',this)">無</div></div></div>
-      <div class="form-row"><label>境界杭</label><div class="radio-group" id="kyokaiGroup"><div class="radio-btn" data-value="有" onclick="selectRadio('kyokaiGroup',this)">有</div><div class="radio-btn" data-value="無" onclick="selectRadio('kyokaiGroup',this)">無</div><div class="radio-btn" data-value="特記参照" onclick="selectRadio('kyokaiGroup',this)">特記参照</div></div></div>
-      <div class="form-row"><label>道路幅 (m)</label><input type="number" id="roadWidth" placeholder="4.0" step="0.1"></div>
+      <div class="form-row"><label>境界杭</label><div class="radio-group" id="kyokaiGroup"><div class="radio-btn" data-value="有" onclick="selectRadio('kyokaiGroup',this)">有</div><div class="radio-btn" data-value="無" onclick="selectRadio('kyokaiGroup',this)">無</div></div></div>
+
+      <div class="section-title">前面道路・建物</div>
+      <div class="form-row"><label>前面道路幅 約(m)</label><input type="number" id="roadWidth" placeholder="4.0" step="0.1"></div>
+      <div class="form-row"><label>既存建物</label><div class="radio-group" id="kizonBGroup"><div class="radio-btn" data-value="無" onclick="selectRadio('kizonBGroup',this)">無</div><div class="radio-btn" data-value="有(住宅)" onclick="selectRadio('kizonBGroup',this)">有(住宅)</div><div class="radio-btn" data-value="有(車庫)" onclick="selectRadio('kizonBGroup',this)">有(車庫)</div><div class="radio-btn" data-value="有(その他)" onclick="selectRadio('kizonBGroup',this)">有(その他)</div></div></div>
+      <div class="form-row"><label>外周擁壁</label><div class="radio-group" id="yohekiGroup"><div class="radio-btn" data-value="無" onclick="selectRadio('yohekiGroup',this)">無</div><div class="radio-btn" data-value="有(RC)" onclick="selectRadio('yohekiGroup',this)">有(RC)</div><div class="radio-btn" data-value="有(ブロック)" onclick="selectRadio('yohekiGroup',this)">有(ブロック)</div><div class="radio-btn" data-value="有(その他)" onclick="selectRadio('yohekiGroup',this)">有(その他)</div></div></div>
+
       <div class="section-title">搬入・重機</div>
-      <div class="form-row"><label>搬入障害</label><div class="radio-group" id="hanyuGroup"><div class="radio-btn" data-value="有" onclick="selectRadio('hanyuGroup',this)">有</div><div class="radio-btn" data-value="無" onclick="selectRadio('hanyuGroup',this)">無</div></div></div>
+      <div class="form-row"><label>搬入障害</label><div class="radio-group" id="hanyuGroup"><div class="radio-btn" data-value="無" onclick="selectRadio('hanyuGroup',this)">無</div><div class="radio-btn" data-value="有(段差/法面)" onclick="selectRadio('hanyuGroup',this)">有(段差/法面)</div><div class="radio-btn" data-value="有(側溝)" onclick="selectRadio('hanyuGroup',this)">有(側溝)</div><div class="radio-btn" data-value="有(空中線)" onclick="selectRadio('hanyuGroup',this)">有(空中線)</div></div></div>
       <div class="form-row"><label>重機自走</label><div class="radio-group" id="juukiGroup"><div class="radio-btn" data-value="有" onclick="selectRadio('juukiGroup',this)">有</div><div class="radio-btn" data-value="無" onclick="selectRadio('juukiGroup',this)">無</div></div></div>
       <div class="form-row"><label>大型車搬入</label><div class="radio-group" id="oogataGroup"><div class="radio-btn" data-value="可" onclick="selectRadio('oogataGroup',this)">可</div><div class="radio-btn" data-value="不可" onclick="selectRadio('oogataGroup',this)">不可</div></div></div>
+
       <div class="section-title">設備・スペース</div>
-      <div class="form-row"><label>水道</label><div class="radio-group" id="suidoGroup"><div class="radio-btn" data-value="有" onclick="selectRadio('suidoGroup',this)">有</div><div class="radio-btn" data-value="無" onclick="selectRadio('suidoGroup',this)">無</div></div></div>
+      <div class="form-row"><label>セルフ駐車場所</label><div class="radio-group" id="selfPGroup"><div class="radio-btn" data-value="敷地内" onclick="selectRadio('selfPGroup',this)">敷地内</div><div class="radio-btn" data-value="前面道路" onclick="selectRadio('selfPGroup',this)">前面道路</div><div class="radio-btn" data-value="近隣路駐" onclick="selectRadio('selfPGroup',this)">近隣路駐</div><div class="radio-btn" data-value="無" onclick="selectRadio('selfPGroup',this)">無</div></div></div>
+      <div class="form-row"><label>プラントスペース</label><div class="radio-group" id="plantGroup"><div class="radio-btn" data-value="敷地内" onclick="selectRadio('plantGroup',this)">敷地内</div><div class="radio-btn" data-value="前面道路" onclick="selectRadio('plantGroup',this)">前面道路</div><div class="radio-btn" data-value="その他" onclick="selectRadio('plantGroup',this)">その他</div><div class="radio-btn" data-value="無" onclick="selectRadio('plantGroup',this)">無</div></div></div>
+      <div class="form-row"><label>水道</label><div class="radio-group" id="suidoGroup"><div class="radio-btn" data-value="有" onclick="selectRadio('suidoGroup',this)">有</div><div class="radio-btn" data-value="無" onclick="selectRadio('suidoGroup',this)">無</div><div class="radio-btn" data-value="近隣借用" onclick="selectRadio('suidoGroup',this)">近隣借用</div><div class="radio-btn" data-value="散水車" onclick="selectRadio('suidoGroup',this)">散水車</div></div></div>
       <div class="form-row"><label>トイレ</label><div class="radio-group" id="toireGroup"><div class="radio-btn" data-value="有" onclick="selectRadio('toireGroup',this)">有</div><div class="radio-btn" data-value="無" onclick="selectRadio('toireGroup',this)">無</div></div></div>
+
+      <div class="section-title">確認・特記</div>
+      <div class="form-row"><label>杭頭天端確認</label><div class="radio-group" id="kuiAtamaGroup"><div class="radio-btn" data-value="有" onclick="selectRadio('kuiAtamaGroup',this)">有</div><div class="radio-btn" data-value="無" onclick="selectRadio('kuiAtamaGroup',this)">無</div></div></div>
       <div class="form-row"><label>特記事項</label><textarea id="tokkiJiko" placeholder="特記事項を入力"></textarea></div>
+
       <div class="form-grid">
         <div class="form-row"><label>GPS緯度</label><input type="number" id="gpsLat" placeholder="35.6812" step="0.0001"></div>
         <div class="form-row"><label>GPS経度</label><input type="number" id="gpsLng" placeholder="139.7671" step="0.0001"></div>
       </div>
       <button class="btn btn-secondary" onclick="getGPS()" style="width:100%;margin-top:4px;">📍 現在地を取得</button>
     </div>
+
     <div style="display:flex;gap:10px;">
       <button class="btn btn-secondary" onclick="goStep(1)" style="flex:1;">← 戻る</button>
       <button class="btn btn-primary" onclick="goStep(3)" style="flex:2;">次へ → 施工情報</button>
@@ -1012,14 +1076,41 @@ async function showDetailPage(id) {
         ${df('住所',m['住所'])}${df('工種',m['工種'])}${df('予定施工日',m['予定施工日'])}
       </div>
       <div class="card"><div class="card-title">📍 現場の場所</div>${mapEmbed}</div>
-      ${s['下見日'] ? `<div class="card"><div class="card-title">現地下見</div><div class="form-grid">
-        ${df('下見日',s['下見日'])}${df('下見担当',s['下見担当'])}
-        ${df('地形',s['地形'])}${df('地質',(s['地質湿潤']||'')+'/'+(s['地質硬軟']||''))}
-        ${df('植生',s['植生'])}${df('空中線',s['空中線'])}
-        ${df('高低差',s['高低差'])}${df('道路幅',s['道路幅']?s['道路幅']+'m':'—')}
-        ${df('搬入障害',s['搬入障害'])}${df('重機自走',s['重機自走'])}
-        ${df('大型車搬入',s['大型車搬入'])}${df('水道',s['水道'])}${df('トイレ',s['トイレ'])}
-      </div>${s['特記事項']?df('特記事項',s['特記事項']):''}</div>` : ''}
+      ${(s['下見日']||s['調査データ']||s['見積作成日']) ? `<div class="card">
+        <div class="card-title">📋 施工打合せ</div>
+        <div style="font-size:11px;font-weight:700;color:#1a56db;letter-spacing:1px;margin:12px 0 6px;">工種・施工仕様</div>
+        <div class="form-grid">
+          ${df('見積作成日',s['見積作成日'])}${df('施工日数',s['施工日数']?s['施工日数']+'日間':'—')}
+          ${df('杭径',s['杭径']?'φ'+s['杭径']+'mm':'—')}${df('杭長',s['杭長']?s['杭長']+'m':'—')}
+          ${df('本数',s['本数']?s['本数']+'本':'—')}${df('改良厚',s['改良厚']?s['改良厚']+'m':'—')}
+          ${df('柱状改良空掘',s['柱状改良空掘'])}
+        </div>
+        <div style="font-size:11px;font-weight:700;color:#1a56db;letter-spacing:1px;margin:12px 0 6px;">書類チェック</div>
+        <div class="form-grid">
+          ${df('調査データ',s['調査データ']+(s['調査データ']==='無'&&s['調査データ予定日']?' (予定:'+s['調査データ予定日']+')':''))}
+          ${df('案内図',s['案内図']+(s['案内図']==='無'&&s['案内図予定日']?' (予定:'+s['案内図予定日']+')':''))}
+          ${df('配置図',s['配置図']+(s['配置図']==='無'&&s['配置図予定日']?' (予定:'+s['配置図予定日']+')':''))}
+          ${df('1階平面図',s['1階平面図']+(s['1階平面図']==='無'&&s['1階平面図予定日']?' (予定:'+s['1階平面図予定日']+')':''))}
+          ${df('基礎伏図',s['基礎伏図']+(s['基礎伏図']==='無'&&s['基礎伏図予定日']?' (予定:'+s['基礎伏図予定日']+')':''))}
+          ${df('検討書',s['検討書']+(s['検討書']==='無'&&s['検討書予定日']?' (予定:'+s['検討書予定日']+')':''))}
+          ${df('杭伏図',s['杭伏図']+(s['杭伏図']==='無'&&s['杭伏図予定日']?' (予定:'+s['杭伏図予定日']+')':''))}
+          ${df('水道立上げ予定',s['水道立上げ予定'])}
+        </div>
+        <div style="font-size:11px;font-weight:700;color:#1a56db;letter-spacing:1px;margin:12px 0 6px;">下見チェックリスト</div>
+        <div class="form-grid">
+          ${df('下見日',s['下見日'])}${df('下見担当',s['下見担当'])}
+          ${df('地形',s['地形'])}${df('地質',(s['地質湿潤']||'')+(s['地質硬軟']?'・'+s['地質硬軟']:''))}
+          ${df('植生',s['植生'])}${df('空中線',s['空中線']+(s['空中線高さ']?' ('+s['空中線高さ']+'m)':''))}
+          ${df('高低差(最大)',s['高低差値']?s['高低差値']+'m':'—')}${df('前面道路幅',s['道路幅']?s['道路幅']+'m':'—')}
+          ${df('地縄',s['地縄'])}${df('丁張',s['丁張'])}${df('境界杭',s['境界杭'])}
+          ${df('既存建物',s['既存建物'])}${df('外周擁壁',s['外周擁壁'])}
+          ${df('搬入障害',s['搬入障害'])}${df('重機自走',s['重機自走'])}
+          ${df('大型車搬入',s['大型車搬入'])}${df('セルフ駐車',s['セルフ駐車'])}
+          ${df('プラントスペース',s['プラントスペース'])}${df('水道',s['水道'])}${df('トイレ',s['トイレ'])}
+          ${df('杭頭天端確認',s['杭頭天端確認'])}
+        </div>
+        ${s['特記事項']?df('特記事項',s['特記事項']):''}
+      </div>` : ''}
       ${k['杭径'] ? `<div class="card"><div class="card-title" style="display:flex;justify-content:space-between;align-items:center;">施工情報<button class="btn btn-warning btn-sm" onclick="openSekoEditModal(${id})" style="color:#fff;font-size:11px;padding:4px 10px;">✏️ 編集</button></div><div class="form-grid">
         ${df('杭径',k['杭径']?'φ'+k['杭径']:'—')}${df('杭長',k['杭長']?k['杭長']+'m':'—')}
         ${df('本数',k['本数']?k['本数']+'本':'—')}${df('掘削深度',k['掘削深度']?k['掘削深度']+'m':'—')}
@@ -1601,16 +1692,38 @@ async function saveCase() {
     const masterResult = await apiPost('案件マスタ', masterData);
     const caseId = masterResult[0]['案件ID'];
     await apiPost('現地下見', {
-      '案件ID':caseId,'下見日':document.getElementById('shitamiDate').value||null,
+      '案件ID':caseId,
+      // 工種・施工仕様
+      '杭径':parseFloat(document.getElementById('s2_kuiKei').value)||null,
+      '杭長':parseFloat(document.getElementById('s2_kuiCho').value)||null,
+      '本数':parseInt(document.getElementById('s2_honsu').value)||null,
+      '改良厚':parseFloat(document.getElementById('s2_kairyoAtsu').value)||null,
+      '見積作成日':document.getElementById('mitsumoriDate').value||null,
+      '施工日数':parseInt(document.getElementById('sekoNissu').value)||null,
+      '柱状改良空掘':getRadio('kuaboriGroup'),
+      // 書類チェック
+      '調査データ':getRadio('chosaDGroup'),'調査データ予定日':document.getElementById('chosaDYotei').value||null,
+      '案内図':getRadio('annaiZGroup'),'案内図予定日':document.getElementById('annaiZYotei').value||null,
+      '配置図':getRadio('haichiZGroup'),'配置図予定日':document.getElementById('haichiZYotei').value||null,
+      '1階平面図':getRadio('heimen1Group'),'1階平面図予定日':document.getElementById('heimen1Yotei').value||null,
+      '基礎伏図':getRadio('kisoFGroup'),'基礎伏図予定日':document.getElementById('kisoFYotei').value||null,
+      '検討書':getRadio('kentoshoGroup'),'検討書予定日':document.getElementById('kentoshoYotei').value||null,
+      '杭伏図':getRadio('kuiFGroup'),'杭伏図予定日':document.getElementById('kuiFYotei').value||null,
+      '水道立上げ予定':getRadio('suidoTGroup'),
+      // 下見チェックリスト
+      '下見日':document.getElementById('shitamiDate').value||null,
       '下見担当':document.getElementById('shitamiTantou').value,
       '地形':getRadio('chikeGroup'),'地質湿潤':getRadio('chitsuGroup'),'地質硬軟':getRadio('katasaGroup'),
       '植生':getRadio('shokuseGroup'),'空中線':getRadio('kuuchusenGroup'),
       '空中線高さ':parseFloat(document.getElementById('kuuchusenHeight').value)||null,
-      '高低差':getRadio('koteisaGroup'),'高低差値':parseFloat(document.getElementById('koteisaValue').value)||null,
+      '高低差値':parseFloat(document.getElementById('koteisaValue').value)||null,
       '地縄':getRadio('jinawGroup'),'丁張':getRadio('choubariGroup'),'境界杭':getRadio('kyokaiGroup'),
       '道路幅':parseFloat(document.getElementById('roadWidth').value)||null,
+      '既存建物':getRadio('kizonBGroup'),'外周擁壁':getRadio('yohekiGroup'),
       '搬入障害':getRadio('hanyuGroup'),'重機自走':getRadio('juukiGroup'),'大型車搬入':getRadio('oogataGroup'),
+      'セルフ駐車':getRadio('selfPGroup'),'プラントスペース':getRadio('plantGroup'),
       '水道':getRadio('suidoGroup'),'トイレ':getRadio('toireGroup'),
+      '杭頭天端確認':getRadio('kuiAtamaGroup'),
       '特記事項':document.getElementById('tokkiJiko').value,
       'GPS緯度':parseFloat(document.getElementById('gpsLat').value)||null,
       'GPS経度':parseFloat(document.getElementById('gpsLng').value)||null,
@@ -1659,6 +1772,15 @@ function backToList() {
   loadCases();
 }
 function goStep(n) {
+  // STEP2→STEP3 移行時：工種仕様フィールドをSTEP3にコピー
+  if(n===3){
+    const sync=[['s2_kuiKei','kuiKei'],['s2_kuiCho','kuiCho'],['s2_honsu','honsu'],['s2_kairyoAtsu','kairyoAtsu']];
+    sync.forEach(([from,to])=>{
+      const v=document.getElementById(from)?.value;
+      const target=document.getElementById(to);
+      if(v&&target&&!target.value) target.value=v;
+    });
+  }
   document.getElementById('step1').style.display=n===1?'block':'none';
   document.getElementById('step2').style.display=n===2?'block':'none';
   document.getElementById('step3').style.display=n===3?'block':'none';
@@ -1668,7 +1790,21 @@ function goStep(n) {
 
 function df(label,value){return `<div class="detail-field"><div class="detail-label">${label}</div><div class="detail-value">${value||'—'}</div></div>`;}
 function getBadgeClass(s){if(s==='確定')return'badge-green';if(s==='施工中')return'badge-yellow';if(s==='完了')return'badge-blue';return'badge-red';}
-function selectRadio(g,el){document.querySelectorAll(`#${g} .radio-btn`).forEach(b=>b.classList.remove('selected'));el.classList.add('selected');}
+// 書類チェックグループと予定日行のマッピング
+const DOC_YOTEI_MAP = {
+  'chosaDGroup':'chosaDYoteiRow','annaiZGroup':'annaiZYoteiRow','haichiZGroup':'haichiZYoteiRow',
+  'heimen1Group':'heimen1YoteiRow','kisoFGroup':'kisoFYoteiRow',
+  'kentoshoGroup':'kentoshoYoteiRow','kuiFGroup':'kuiFYoteiRow'
+};
+function selectRadio(g,el){
+  document.querySelectorAll(`#${g} .radio-btn`).forEach(b=>b.classList.remove('selected'));
+  el.classList.add('selected');
+  // 書類チェック欄：「無」選択時に予定日行を表示
+  if(DOC_YOTEI_MAP[g]){
+    const row=document.getElementById(DOC_YOTEI_MAP[g]);
+    if(row) row.classList.toggle('visible', el.dataset.value==='無');
+  }
+}
 function toggleChip(el){el.classList.toggle('selected');}
 function getRadio(g){const s=document.querySelector(`#${g} .radio-btn.selected`);return s?s.dataset.value:null;}
 function getChips(g){return Array.from(document.querySelectorAll(`#${g} .check-chip.selected`)).map(el=>el.dataset.value).join('・')||null;}
