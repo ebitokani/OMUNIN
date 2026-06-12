@@ -248,7 +248,6 @@ body{font-family:'M PLUS Rounded 1c',sans-serif;background:#f0f4f8;color:#1a1a2e
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
     <div style="font-size:13px;color:#4a5568;" id="caseCount">読込中...</div>
     <div style="display:flex;gap:8px;">
-      <button class="btn btn-secondary btn-sm" onclick="exportExcel()">📊 Excel出力</button>
       <button class="btn btn-secondary btn-sm" onclick="loadCases()">🔄 更新</button>
     </div>
   </div>
@@ -731,7 +730,95 @@ async function processInviteToken(token) {
   } catch(e) { console.error(e); }
 }
 
-// --- Excel出力 ---
+// --- Excel出力（施工打合せシート様式・案件単位） ---
+async function exportShitamiExcel(caseId) {
+  showToast('📊 Excelを作成中...');
+  try {
+    const [masters, shitamis] = await Promise.all([
+      apiGet('案件マスタ', `%E6%A1%88%E4%BB%B6ID=eq.${caseId}`),
+      apiGet('現地下見', `%E6%A1%88%E4%BB%B6ID=eq.${caseId}`)
+    ]);
+    const m = masters[0]||{}, s = shitamis[0]||{};
+
+    // 施工打合せシート様式で1行に全データを展開
+    const row = {
+      // 基本情報
+      'ビルダー名': m['ビルダー名']||'',
+      '担当営業': m['担当営業']||'',
+      '工事名': m['工事名']||'',
+      '施主名': m['施主名']||'',
+      '住所': m['住所']||'',
+      'ビルダー担当者': m['ビルダー担当者']||'',
+      'TEL': m['TEL']||'',
+      '工種': m['工種']||'',
+      // 工種・施工仕様
+      '杭径φ(mm)': s['杭径']||'',
+      '杭長L(m)': s['杭長']||'',
+      '本数': s['本数']||'',
+      '改良厚(m)': s['改良厚']||'',
+      '柱状改良空掘': s['柱状改良空掘']||'',
+      '見積作成日': s['見積作成日']||'',
+      '施工予定日': m['予定施工日']||'',
+      '施工日数': s['施工日数']||'',
+      // 書類チェック
+      '調査データ': s['調査データ']||'',
+      '調査データ予定日': s['調査データ予定日']||'',
+      '案内図': s['案内図']||'',
+      '案内図予定日': s['案内図予定日']||'',
+      '配置図': s['配置図']||'',
+      '配置図予定日': s['配置図予定日']||'',
+      '1階平面図': s['1階平面図']||'',
+      '1階平面図予定日': s['1階平面図予定日']||'',
+      '基礎伏図': s['基礎伏図']||'',
+      '基礎伏図予定日': s['基礎伏図予定日']||'',
+      '検討書': s['検討書']||'',
+      '検討書予定日': s['検討書予定日']||'',
+      '杭伏図': s['杭伏図']||'',
+      '杭伏図予定日': s['杭伏図予定日']||'',
+      '水道立上げ予定': s['水道立上げ予定']||'',
+      // 下見チェックリスト
+      '下見日': s['下見日']||'',
+      '下見担当': s['下見担当']||'',
+      '地形': s['地形']||'',
+      '地質(湿潤)': s['地質湿潤']||'',
+      '地質(硬軟)': s['地質硬軟']||'',
+      '植生': s['植生']||'',
+      '空中線': s['空中線']||'',
+      '空中線高さ(m)': s['空中線高さ']||'',
+      '高低差(最大m)': s['高低差値']||'',
+      '地縄': s['地縄']||'',
+      '丁張': s['丁張']||'',
+      '境界杭': s['境界杭']||'',
+      '前面道路幅(m)': s['道路幅']||'',
+      '既存建物': s['既存建物']||'',
+      '外周擁壁': s['外周擁壁']||'',
+      '搬入障害': s['搬入障害']||'',
+      '重機自走': s['重機自走']||'',
+      '大型車搬入': s['大型車搬入']||'',
+      'セルフ駐車場所': s['セルフ駐車']||'',
+      'プラントスペース': s['プラントスペース']||'',
+      '水道': s['水道']||'',
+      'トイレ': s['トイレ']||'',
+      '杭頭天端確認': s['杭頭天端確認']||'',
+      '特記事項': s['特記事項']||'',
+    };
+
+    const ws = XLSX.utils.json_to_sheet([row]);
+
+    // 列幅を自動調整
+    const colWidths = Object.keys(row).map(k => ({ wch: Math.max(k.length * 2, 12) }));
+    ws['!cols'] = colWidths;
+
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, '施工打合せシート');
+
+    const fname = `${m['工事名']||'案件'}資料.xlsx`;
+    XLSX.writeFile(wb, fname);
+    showToast('✅ Excel出力しました！');
+  } catch(e) { showToast('❌ 出力エラー: ' + e.message, true); }
+}
+
+// --- 旧Excel出力（互換用・現在は未使用） ---
 async function exportExcel() {
   showToast('📊 Excelを作成中...');
   try {
@@ -1185,7 +1272,10 @@ async function showDetailPage(id) {
       </div>
       <div class="card"><div class="card-title">📍 現場の場所</div>${mapEmbed}</div>
       ${(s['下見日']||s['調査データ']||s['見積作成日']) ? `<div class="card">
-        <div class="card-title">📋 施工打合せ</div>
+        <div class="card-title" style="display:flex;justify-content:space-between;align-items:center;">
+          📋 施工打合せ
+          <button class="btn btn-primary btn-sm" onclick="exportShitamiExcel(${id})" style="font-size:11px;padding:4px 10px;">📊 Excel出力</button>
+        </div>
         <div style="font-size:11px;font-weight:700;color:#1a56db;letter-spacing:1px;margin:12px 0 6px;">工種・施工仕様</div>
         <div class="form-grid">
           ${df('見積作成日',s['見積作成日'])}${df('施工日数',s['施工日数']?s['施工日数']+'日間':'—')}
